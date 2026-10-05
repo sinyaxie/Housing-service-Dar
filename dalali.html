@@ -3,311 +3,220 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weka chumba · Housing Services DSM</title>
+<title>Housing Services · Madalali</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="style.css">
-<style>
-  .preview-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .preview-grid .pv {
-    position: relative;
-    width: 88px;
-    height: 66px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1.5px solid var(--line);
-    background: #e2e8f0;
-  }
-  .preview-grid .pv img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .preview-grid .pv button {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 22px;
-    height: 22px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(0,0,0,.65);
-    color: #fff;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-  }
-  .file-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    background: var(--bg);
-    border: 1.5px dashed var(--line);
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: border-color .15s, background .15s;
-  }
-  .file-label:hover {
-    border-color: var(--brand);
-    background: var(--brand-soft);
-  }
-  .file-label input { display: none; }
-  .progress {
-    margin-top: 12px;
-    font-weight: 700;
-    color: var(--brand-dark);
-    font-size: 0.9rem;
-  }
-</style>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="index.html">HOUSING SERVICES<small>DAR ES SALAAM · VYUO VYOTE</small></a>
+    <a class="brand" href="index.html">HOUSING SERVICES<small>VYUO VYOTE · DAR ES SALAAM</small></a>
     <nav aria-label="Menyu">
       <a href="index.html">Vyumba</a>
       <a href="dalali.html" aria-current="page">Madalali</a>
-      <a href="admin.html">Admin</a>
     </nav>
   </div>
 </header>
 
-<main>
-  <div class="hero" style="padding-bottom:40px">
-    <div class="wrap">
-      <h1>Weka chumba chako <span>bure</span>.</h1>
-      <p>Jaza maelezo, pakia picha, kisha tuma. Baada ya kupitiwa chumba kitaonekana kwa wanafunzi.</p>
-    </div>
-  </div>
+<main class="wrap" style="padding-block:28px 40px">
+  <div id="config-warning" class="notice" hidden>Mradi bado haujaunganishwa na Firebase. Fungua <b>lib.js</b> na uweke config yako (angalia SETUP.md).</div>
 
-  <section class="block">
-    <div class="wrap">
-      <div id="config-warning" class="notice" hidden>Mradi bado haujaunganishwa na Firebase. Fungua <b>lib.js</b> na uweke config yako (angalia SETUP.md).</div>
-
-      <div class="form-card">
-        <h2>Maelezo ya chumba</h2>
-        <p class="lead">Jaza kwa usahihi. Picha zitapakiwa moja kwa moja (si link).</p>
-
-        <div id="msg" class="msg" hidden></div>
-
-        <form id="room-form" autocomplete="on">
-          <div class="form-grid">
-            <div class="full">
-              <label for="title">Jina la chumba *</label>
-              <input id="title" required maxlength="80" placeholder="Mfano: Single yenye fanicha – Sinza">
-            </div>
-
-            <div>
-              <label for="uni">Chuo kilicho karibu *</label>
-              <select id="uni" required><option value="">Chagua chuo</option></select>
-            </div>
-
-            <div>
-              <label for="area">Eneo *</label>
-              <select id="area" required><option value="">Chagua eneo</option></select>
-            </div>
-
-            <div>
-              <label for="type">Aina ya chumba *</label>
-              <select id="type" required><option value="">Chagua aina</option></select>
-            </div>
-
-            <div>
-              <label for="price">Bei kwa mwezi (TSh) *</label>
-              <input id="price" type="number" required min="10000" max="2000000" step="1000" placeholder="80000">
-            </div>
-
-            <div>
-              <label for="walk">Dakika kutembea hadi chuo</label>
-              <input id="walk" type="number" min="1" max="120" placeholder="15">
-              <p class="hint">Acha tupu kama hujui</p>
-            </div>
-
-            <div class="full">
-              <label>Picha za chumba * (1–6)</label>
-              <label class="file-label">
-                <span>📷 Chagua picha</span>
-                <input type="file" id="photos" accept="image/*" multiple>
-              </label>
-              <div class="preview-grid" id="preview"></div>
-              <p class="hint">Unaweza kuchagua picha nyingi. Picha ya kwanza itakuwa kuu.</p>
-            </div>
-
-            <div class="full">
-              <label>Vifaa / Features</label>
-              <div class="checks" id="feats-box">
-                <label><input type="checkbox" value="WiFi"> WiFi</label>
-                <label><input type="checkbox" value="Fanicha"> Fanicha</label>
-                <label><input type="checkbox" value="Bathroom"> Bathroom</label>
-                <label><input type="checkbox" value="Kitchen"> Kitchen</label>
-                <label><input type="checkbox" value="Security"> Security</label>
-                <label><input type="checkbox" value="Water"> Maji 24/7</label>
-                <label><input type="checkbox" value="Parking"> Parking</label>
-                <label><input type="checkbox" value="Generator"> Generator</label>
-              </div>
-            </div>
-
-            <div class="full">
-              <label for="description">Maelezo zaidi</label>
-              <textarea id="description" maxlength="800" placeholder="Eleza chumba, sheria, karibu na nini, n.k."></textarea>
-            </div>
-
-            <div>
-              <label for="dalaliName">Jina lako (Dalali) *</label>
-              <input id="dalaliName" required maxlength="60" placeholder="Jina kamili">
-            </div>
-
-            <div>
-              <label for="phone">Namba ya simu *</label>
-              <input id="phone" required type="tel" placeholder="07XXXXXXXX">
-              <p class="hint">Wanafunzi watakupigia / WhatsApp</p>
-            </div>
-          </div>
-
-          <div class="progress" id="progress" hidden></div>
-
-          <div class="form-actions">
-            <button class="btn" type="submit" id="submit-btn">Tuma chumba</button>
-            <a class="btn ghost" href="index.html">Rudi kwenye orodha</a>
-          </div>
-        </form>
+  <!-- INGIA / JISAJILI -->
+  <section id="auth" hidden>
+    <h1 class="page">Madalali</h1>
+    <p class="sub">Ingia au jisajili, kisha weka vyumba vyako. Kila chumba kinakaguliwa kabla ya kuonekana kwa wateja.</p>
+    <div class="panel" style="max-width:520px">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="t-in" aria-selected="true">Ingia</button>
+        <button type="button" role="tab" id="t-up" aria-selected="false">Jisajili</button>
       </div>
+      <form id="f-in" class="form">
+        <div class="field"><label for="in-email">Barua pepe</label><input id="in-email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="in-pass">Password</label><input id="in-pass" type="password" autocomplete="current-password" required></div>
+        <button class="btn" type="submit" id="in-btn">Ingia</button>
+        <button class="btn ghost small" type="button" id="forgot">Nimesahau password</button>
+      </form>
+      <form id="f-up" class="form" hidden>
+        <div class="field"><label for="up-name">Jina lako</label><input id="up-name" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="up-phone">Namba ya simu (WhatsApp)</label><input id="up-phone" type="tel" autocomplete="tel" placeholder="0712 345 678" required></div>
+        <div class="field"><label for="up-email">Barua pepe</label><input id="up-email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="up-pass">Password (angalau herufi 6)</label><input id="up-pass" type="password" autocomplete="new-password" minlength="6" required></div>
+        <button class="btn" type="submit" id="up-btn">Fungua account</button>
+      </form>
+      <p id="auth-msg" class="msg" style="margin-top:12px"></p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dash" hidden>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">
+      <div><h1 class="page" style="margin:0" id="hello">Karibu</h1><p class="sub" style="margin:0">Weka chumba kipya au simamia ulivyoweka.</p></div>
+      <button class="btn ghost small" type="button" id="logout">Toka</button>
+    </div>
+
+    <div class="panel">
+      <h2>Weka chumba kipya</h2>
+      <form id="f-room" class="form">
+        <div class="field"><label for="r-title">Jina la tangazo</label><input id="r-title" type="text" maxlength="100" placeholder="Mfano: Self-contained safi karibu na chuo" required></div>
+        <div class="row2">
+          <div class="field"><label for="r-chuo">Chuo kilicho karibu</label><select id="r-chuo" required><option value="">Chagua chuo</option></select></div>
+          <div class="field"><label for="r-type">Aina ya chumba</label><select id="r-type" required></select></div>
+        </div>
+        <div class="field"><label for="r-area">Eneo / mtaa</label><input id="r-area" type="text" list="areas" maxlength="40" placeholder="Mfano: Mabibo" required><datalist id="areas"><option value="Mabibo"><option value="Sinza"><option value="Ubungo"><option value="Kinondoni"><option value="Upanga"><option value="Kisutu"><option value="Kariakoo"><option value="Ilala"><option value="Mwenge"><option value="Kimara"><option value="Makumbusho"><option value="Mbezi"></datalist></div>
+        <div class="row2">
+          <div class="field"><label for="r-price">Bei kwa mwezi (TSh)</label><input id="r-price" type="number" min="1000" step="1000" inputmode="numeric" required></div>
+          <div class="field"><label for="r-walk">Dakika kwa miguu hadi chuo (si lazima)</label><input id="r-walk" type="number" min="1" max="120" inputmode="numeric"></div>
+        </div>
+        <div class="field"><span class="lbl">Vilivyomo</span><div class="checks" id="r-feats"></div></div>
+        <div class="field"><label for="r-desc">Maelezo</label><textarea id="r-desc" maxlength="1000" placeholder="Eleza chumba, masharti ya kodi, malipo ya awali, n.k."></textarea></div>
+        <div class="field"><label for="r-phone">Namba ya mawasiliano</label><input id="r-phone" type="tel" required></div>
+        <div class="field">
+          <label for="r-photos">Picha (1 hadi 3)</label>
+          <input id="r-photos" type="file" accept="image/*" multiple required>
+          <p class="hint">Picha zinapunguzwa ukubwa zenyewe. Weka picha ya chumba cha kwanza kwanza, itaonekana kwenye orodha.</p>
+          <div class="previews" id="r-prev"></div>
+        </div>
+        <button class="btn" type="submit" id="r-btn">Tuma chumba</button>
+        <p id="r-msg" class="msg"></p>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Vyumba vyangu</h2>
+      <p class="sub" id="mine-status">Inapakia...</p>
+      <div id="mine" style="display:grid;gap:14px"></div>
     </div>
   </section>
 </main>
-<footer class="foot">Housing Services DSM · vyumba vya kupangisha kwa wanafunzi wa vyuo vya Dar es Salaam</footer>
 
 <script type="module">
-import {
-  db, collection, addDoc, setDoc, doc, serverTimestamp,
-  $, TYPES, AREAS, UNIS, needConfig, uploadImage
-} from "./lib.js";
+import { auth, db, $, esc, money, compress, authError, say, needConfig, TYPES, FEATS, CHUO,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail,
+  collection, query, where, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp } from "./lib.js";
 
-const form = $("room-form");
-const msg = $("msg");
-const btn = $("submit-btn");
-const progress = $("progress");
-const preview = $("preview");
-const photosInput = $("photos");
+let user = null, profile = {};
+const STATUS = { pending: ["Inasubiri kukubaliwa", "b-pending"], approved: ["Inaonekana kwa wateja", "b-approved"], rejected: ["Haikukubaliwa", "b-rejected"] };
 
-let selectedFiles = []; // File objects
+TYPES.forEach((t) => $("r-type").append(new Option(t, t)));
+CHUO.forEach(([s, full]) => $("r-chuo").append(new Option(s === "Chuo kingine" ? s : s + " · " + full, s)));
+$("r-feats").innerHTML = FEATS.map((f) => `<label><input type="checkbox" name="feat" value="${esc(f)}">${esc(f)}</label>`).join("");
 
-UNIS.forEach((u) => $("uni").append(new Option(u, u)));
-AREAS.forEach((a) => $("area").append(new Option(a, a)));
-TYPES.forEach((t) => $("type").append(new Option(t, t)));
+// Tabs
+function tab(inn) {
+  $("f-in").hidden = !inn; $("f-up").hidden = inn;
+  $("t-in").setAttribute("aria-selected", inn); $("t-up").setAttribute("aria-selected", !inn);
+  say("auth-msg", "");
+}
+$("t-in").onclick = () => tab(true);
+$("t-up").onclick = () => tab(false);
 
-function showMsg(text, ok = true) {
-  msg.hidden = false;
-  msg.className = "msg " + (ok ? "ok" : "err");
-  msg.textContent = text;
-  msg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+if (!needConfig()) { /* onyo linaonekana */ } else {
+  onAuthStateChanged(auth, async (u) => {
+    user = u;
+    $("auth").hidden = !!u; $("dash").hidden = !u;
+    if (!u) return;
+    try { const p = await getDoc(doc(db, "brokers", u.uid)); profile = p.exists() ? p.data() : {}; } catch (e) { profile = {}; }
+    $("hello").textContent = "Karibu" + (profile.name ? ", " + profile.name : "");
+    if (!$("r-phone").value) $("r-phone").value = profile.phone || "";
+    loadMine();
+  });
 }
 
-function renderPreview() {
-  preview.innerHTML = selectedFiles.map((f, i) => {
-    const url = URL.createObjectURL(f);
-    return `<div class="pv">
-      <img src="${url}" alt="">
-      <button type="button" data-i="${i}" title="Ondoa">×</button>
-    </div>`;
-  }).join("");
-}
-
-photosInput.addEventListener("change", () => {
-  const incoming = [...photosInput.files];
-  selectedFiles = [...selectedFiles, ...incoming].slice(0, 6);
-  photosInput.value = "";
-  renderPreview();
+$("f-in").addEventListener("submit", async (e) => {
+  e.preventDefault(); say("auth-msg", ""); $("in-btn").disabled = true;
+  try { await signInWithEmailAndPassword(auth, $("in-email").value.trim(), $("in-pass").value); }
+  catch (err) { say("auth-msg", authError(err)); }
+  $("in-btn").disabled = false;
 });
-
-preview.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
-  selectedFiles.splice(Number(b.dataset.i), 1);
-  renderPreview();
-});
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!needConfig()) {
-    showMsg("Firebase bado haijawekwa. Fungua lib.js na weka config.", false);
-    return;
-  }
-
-  const title = $("title").value.trim();
-  const uni = $("uni").value;
-  const area = $("area").value;
-  const type = $("type").value;
-  const price = Number($("price").value);
-  const walk = $("walk").value ? Number($("walk").value) : null;
-  const description = $("description").value.trim();
-  const dalaliName = $("dalaliName").value.trim();
-  const phone = $("phone").value.trim();
-  const feats = [...document.querySelectorAll("#feats-box input:checked")].map((c) => c.value);
-
-  if (!title || !uni || !area || !type || !price || !dalaliName || !phone) {
-    showMsg("Jaza sehemu zote zilizo na *", false);
-    return;
-  }
-  if (!selectedFiles.length) {
-    showMsg("Chagua angalau picha 1 ya chumba.", false);
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "Inapakia...";
-  progress.hidden = false;
-
+$("forgot").onclick = async () => {
+  const em = $("in-email").value.trim();
+  if (!em) return say("auth-msg", "Andika barua pepe yako kwanza, kisha bonyeza tena.");
+  try { await sendPasswordResetEmail(auth, em); say("auth-msg", "Tumekutumia barua pepe ya kubadilisha password.", true); }
+  catch (err) { say("auth-msg", authError(err)); }
+};
+$("f-up").addEventListener("submit", async (e) => {
+  e.preventDefault(); say("auth-msg", ""); $("up-btn").disabled = true;
   try {
-    // 1. Create room doc first (to get ID)
-    progress.textContent = "Inahifadhi maelezo...";
-    const roomRef = await addDoc(collection(db, "rooms"), {
-      title, uni, area, type, price, walk,
-      thumb: "", // will update
-      feats, description, dalaliName, phone,
-      status: "pending",
-      taken: false,
-      createdAt: serverTimestamp(),
+    const c = await createUserWithEmailAndPassword(auth, $("up-email").value.trim(), $("up-pass").value);
+    const data = { name: $("up-name").value.trim(), phone: $("up-phone").value.trim(), createdAt: serverTimestamp() };
+    await setDoc(doc(db, "brokers", c.user.uid), data);
+    profile = data; $("hello").textContent = "Karibu, " + data.name; $("r-phone").value = data.phone;
+  } catch (err) { say("auth-msg", authError(err)); }
+  $("up-btn").disabled = false;
+});
+$("logout").onclick = () => signOut(auth);
+
+// Hakiki picha
+$("r-photos").addEventListener("change", () => {
+  const fs = [...$("r-photos").files].slice(0, 3);
+  $("r-prev").innerHTML = "";
+  fs.forEach((f) => { const i = document.createElement("img"); i.alt = ""; i.src = URL.createObjectURL(f); $("r-prev").append(i); });
+  if ($("r-photos").files.length > 3) say("r-msg", "Picha 3 za kwanza tu ndizo zitatumwa.");
+});
+
+// Tuma chumba
+$("f-room").addEventListener("submit", async (e) => {
+  e.preventDefault(); say("r-msg", "");
+  const files = [...$("r-photos").files].slice(0, 3);
+  if (!files.length) return say("r-msg", "Weka angalau picha moja.");
+  const btn = $("r-btn"); btn.disabled = true; btn.textContent = "Inatuma...";
+  let id = null;
+  try {
+    const photos = []; for (const f of files) photos.push(await compress(f, 800, 0.55));
+    if (photos.join("").length > 900000) throw new Error("Picha ni kubwa mno. Tumia picha ndogo zaidi.");
+    const thumb = await compress(files[0], 360, 0.6);
+    const ref = await addDoc(collection(db, "rooms"), {
+      ownerId: user.uid, dalaliName: profile.name || "", phone: $("r-phone").value.trim(),
+      title: $("r-title").value.trim(), type: $("r-type").value, chuo: $("r-chuo").value, area: $("r-area").value.trim(),
+      price: Number($("r-price").value), walk: Number($("r-walk").value) || 0,
+      description: $("r-desc").value.trim(), feats: [...document.querySelectorAll("input[name=feat]:checked")].map((x) => x.value),
+      thumb, status: "pending", taken: false, createdAt: serverTimestamp()
     });
-
-    // 2. Upload images
-    const urls = [];
-    for (let i = 0; i < selectedFiles.length; i++) {
-      progress.textContent = `Inapakia picha ${i + 1} / ${selectedFiles.length}...`;
-      const path = `rooms/${roomRef.id}/${Date.now()}_${i}.jpg`;
-      const url = await uploadImage(selectedFiles[i], path);
-      urls.push(url);
-    }
-
-    // 3. Update room with thumb + save photos
-    progress.textContent = "Inakamilisha...";
-    await setDoc(doc(db, "rooms", roomRef.id), { thumb: urls[0] }, { merge: true });
-    await setDoc(doc(db, "roomPhotos", roomRef.id), {
-      photos: urls,
-      updatedAt: serverTimestamp(),
-    });
-
-    showMsg("Asante! Chumba chako kimetumwa. Kitatolewa baada ya admin kuidhinisha.");
-    form.reset();
-    selectedFiles = [];
-    renderPreview();
+    id = ref.id;
+    await setDoc(doc(db, "roomPhotos", id), { photos, ownerId: user.uid });
+    $("f-room").reset(); $("r-prev").innerHTML = ""; $("r-phone").value = profile.phone || "";
+    say("r-msg", "Chumba kimetumwa. Kitaonekana kwa wateja baada ya kukubaliwa.", true);
+    loadMine();
   } catch (err) {
-    console.error(err);
-    showMsg("Hitilafu: " + (err.message || "Jaribu tena baadaye."), false);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Tuma chumba";
-    progress.hidden = true;
+    if (id) { try { await deleteDoc(doc(db, "rooms", id)); } catch (x) {} }
+    say("r-msg", err.message || "Imeshindikana kutuma. Jaribu tena.");
   }
+  btn.disabled = false; btn.textContent = "Tuma chumba";
+});
+
+async function loadMine() {
+  try {
+    const snap = await getDocs(query(collection(db, "rooms"), where("ownerId", "==", user.uid)));
+    const rows = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    $("mine-status").textContent = rows.length ? rows.length + " vyumba" : "Bado hujaweka chumba chochote.";
+    $("mine").innerHTML = rows.map((r) => `
+      <div class="item">
+        <img class="t" src="${r.thumb}" alt="">
+        <div>
+          <h3>${esc(r.title)}</h3>
+          <p class="where">${esc(r.area)}${r.chuo ? " · " + esc(r.chuo) : ""} · ${money(r.price)}</p>
+          <span class="badge ${STATUS[r.status][1]}">${STATUS[r.status][0]}</span>${r.taken ? ' <span class="badge b-rejected">Imechukuliwa</span>' : ""}
+        </div>
+        <div class="acts">
+          <button class="btn ghost small" type="button" data-act="taken" data-id="${r.id}" data-v="${!r.taken}">${r.taken ? "Rudisha kwenye orodha" : "Weka imechukuliwa"}</button>
+          <button class="btn ghost small" type="button" data-act="del" data-id="${r.id}">Futa</button>
+        </div>
+      </div>`).join("");
+  } catch (e) { $("mine-status").textContent = "Imeshindikana kupakia vyumba vyako."; }
+}
+$("mine").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  b.disabled = true;
+  try {
+    if (b.dataset.act === "taken") await updateDoc(doc(db, "rooms", b.dataset.id), { taken: b.dataset.v === "true" });
+    else if (confirm("Una uhakika unataka kufuta chumba hiki?")) {
+      try { await deleteDoc(doc(db, "roomPhotos", b.dataset.id)); } catch (x) {}
+      await deleteDoc(doc(db, "rooms", b.dataset.id));
+    }
+  } catch (err) { alert("Imeshindikana. Jaribu tena."); }
+  loadMine();
 });
 </script>
 </body>
