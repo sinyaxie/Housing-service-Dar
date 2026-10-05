@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Housing Services · Admin</title>
+<title>Housing Services</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap">
@@ -13,121 +12,254 @@
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="index.html">HOUSING SERVICES<small>ADMIN</small></a>
-    <nav aria-label="Menyu"><a href="index.html">Tazama website</a></nav>
+    <a class="brand" href="index.html">HOUSING SERVICES<small>VYUO VYOTE · DAR ES SALAAM</small></a>
+    <nav aria-label="Menyu">
+      <a href="#vyumba">Vyumba</a>
+      <a href="#jinsi">Jinsi</a>
+      <a href="dalali.html">Madalali</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap" style="padding-block:28px 40px">
-  <div id="config-warning" class="notice" hidden>Mradi bado haujaunganishwa na Firebase. Fungua <b>lib.js</b> na uweke config yako (angalia SETUP.md).</div>
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <h1>Pata chumba karibu na <span>chuo chako</span>, Dar es Salaam.</h1>
+      <p>Chagua chuo, aina ya chumba na bei unayoweza. Wasiliana moja kwa moja na dalali, bila usumbufu.</p>
+      <div class="filters" role="search">
+        <div class="field"><label for="f-chuo">Chuo</label><select id="f-chuo"><option value="">Vyuo vyote</option></select></div>
+        <div class="field"><label for="f-type">Aina ya chumba</label><select id="f-type"><option value="">Aina zote</option></select></div>
+        <div class="field">
+          <label for="f-price">Bei kwa mwezi</label>
+          <select id="f-price">
+            <option value="0">Bei yoyote</option>
+            <option value="60000">Hadi TSh 60,000</option>
+            <option value="100000">Hadi TSh 100,000</option>
+            <option value="150000">Hadi TSh 150,000</option>
+            <option value="250000">Hadi TSh 250,000</option>
+          </select>
+        </div>
+        <button class="btn ghost clear" type="button" id="clear" hidden>Futa vichujio</button>
+      </div>
+    </div>
+  </div>
 
-  <section id="auth" hidden>
-    <h1 class="page">Admin</h1>
-    <div class="panel" style="max-width:520px">
-      <form id="f-in" class="form">
-        <div class="field"><label for="a-email">Barua pepe</label><input id="a-email" type="email" autocomplete="email" required></div>
-        <div class="field"><label for="a-pass">Password</label><input id="a-pass" type="password" autocomplete="current-password" required></div>
-        <button class="btn" type="submit" id="a-btn">Ingia</button>
-        <p id="a-msg" class="msg"></p>
-      </form>
+  <section class="block" id="vyumba">
+    <div class="wrap">
+      <div id="config-warning" class="notice" hidden>Mradi bado haujaunganishwa na Firebase. Fungua <b>lib.js</b> na uweke config yako (angalia SETUP.md).</div>
+      <div id="sample-note" class="notice" style="margin-bottom:16px" hidden>Vyumba vilivyo hapa ni mifano ya kuonyesha muonekano. Vyumba halisi vitaonekana madalali wakianza kuviweka.</div>
+      <div class="toolbar">
+        <div><h2>Vyumba vilivyopo</h2><p class="sub" id="status" style="margin:0">Inapakia vyumba...</p></div>
+        <div class="field sort"><label for="f-sort">Panga kwa</label>
+          <select id="f-sort">
+            <option value="new">Vipya zaidi</option>
+            <option value="low">Bei: ndogo kwenda kubwa</option>
+            <option value="high">Bei: kubwa kwenda ndogo</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="list"></div>
     </div>
   </section>
 
-  <section id="dash" hidden>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px">
-      <h1 class="page" style="margin:0">Vyumba vya kukagua</h1>
-      <button class="btn ghost small" type="button" id="logout">Toka</button>
+  <section class="block" id="jinsi">
+    <div class="wrap">
+      <h2>Jinsi ya kupata chumba</h2>
+      <p class="sub">Hatua tatu tu.</p>
+      <ol class="steps">
+        <li><h3>Tafuta</h3><p>Chagua chuo chako na bei, kisha angalia vyumba vinavyoonekana.</p></li>
+        <li><h3>Wasiliana</h3><p>Fungua chumba, kisha mpigie dalali au mtumie ujumbe wa WhatsApp.</p></li>
+        <li><h3>Tembelea na ulipie</h3><p>Nenda kuona chumba mwenyewe. Ukikipenda, malizia malipo na uhamie.</p></li>
+      </ol>
     </div>
-    <div class="tabs" role="tablist" id="tabs">
-      <button type="button" data-s="pending" aria-selected="true">Zinasubiri <span id="c-pending"></span></button>
-      <button type="button" data-s="approved" aria-selected="false">Zimekubaliwa <span id="c-approved"></span></button>
-      <button type="button" data-s="rejected" aria-selected="false">Zimekataliwa <span id="c-rejected"></span></button>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cta">
+        <div><h2>Wewe ni dalali?</h2><p>Jisajili bure na uweke vyumba vyako vionekane kwa wanafunzi wa vyuo vyote vya Dar es Salaam.</p></div>
+        <a class="btn" href="dalali.html">Weka chumba</a>
+      </div>
     </div>
-    <div id="list" style="display:grid;gap:14px"></div>
   </section>
 </main>
+<footer class="foot">Housing Services · vyumba vya kupangisha kwa wanafunzi wa vyuo vya Dar es Salaam</footer>
+
+<dialog id="dlg" aria-labelledby="d-title">
+  <div class="dlg-in">
+    <div class="dlg-top"><div><span class="tag" id="d-type"></span><h2 id="d-title"></h2><p class="where" id="d-where"></p></div><button class="btn ghost small" id="d-close" type="button">Funga</button></div>
+    <div class="gal-main"><img id="d-main" alt=""></div>
+    <div class="gal-thumbs" id="d-thumbs"></div>
+    <div class="price" id="d-price"></div>
+    <ul class="feats" id="d-feats"></ul>
+    <p id="d-desc" style="margin:0;white-space:pre-line"></p>
+    <div class="panel">
+      <div class="lbl" id="d-who"></div>
+      <div class="contact-row" id="d-contact"></div>
+    </div>
+  </div>
+</dialog>
 
 <script type="module">
-import { auth, db, $, esc, money, authError, say, needConfig,
-  signInWithEmailAndPassword, signOut, onAuthStateChanged,
-  collection, getDocs, doc, getDoc, updateDoc, deleteDoc } from "./lib.js";
+const lib = await import("./lib.js").catch(() => null);
+const live = !!(lib && lib.configured);
 
-let ALL = [], cur = "pending";
-
-if (needConfig()) {
-  onAuthStateChanged(auth, async (u) => {
-    if (!u) { $("auth").hidden = false; $("dash").hidden = true; return; }
-    let ok = false;
-    try { ok = (await getDoc(doc(db, "admins", u.uid))).exists(); } catch (e) {}
-    if (!ok) {
-      await signOut(auth);
-      $("auth").hidden = false; $("dash").hidden = true;
-      return say("a-msg", "Account hii haina ruhusa ya admin.");
-    }
-    $("auth").hidden = true; $("dash").hidden = false;
-    load();
-  });
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const money = (n) => "TSh " + Number(n).toLocaleString("en-US");
+function waNumber(p) {
+  let d = String(p || "").replace(/\D/g, "");
+  if (d.startsWith("0")) d = "255" + d.slice(1);
+  else if (d.length === 9) d = "255" + d;
+  return d;
 }
 
-$("f-in").addEventListener("submit", async (e) => {
-  e.preventDefault(); say("a-msg", ""); $("a-btn").disabled = true;
-  try { await signInWithEmailAndPassword(auth, $("a-email").value.trim(), $("a-pass").value); }
-  catch (err) { say("a-msg", authError(err)); }
-  $("a-btn").disabled = false;
-});
-$("logout").onclick = () => signOut(auth);
+const TYPES = ["Chumba kimoja", "Self-contained", "Master", "Chumba cha pamoja", "Apartment"];
+const CHUO = [
+  ["UDSM", "University of Dar es Salaam"], ["MUHAS", "Muhimbili University of Health and Allied Sciences"],
+  ["ARU", "Ardhi University"], ["IFM", "Institute of Finance Management"],
+  ["DIT", "Dar es Salaam Institute of Technology"], ["CBE", "College of Business Education"],
+  ["OUT", "Open University of Tanzania"], ["TIA", "Tanzania Institute of Accountancy"],
+  ["NIT", "National Institute of Transport"], ["ISW", "Institute of Social Work"],
+  ["DUCE", "Dar es Salaam University College of Education"], ["SJUIT", "St. Joseph University in Tanzania"],
+  ["TUDARCO", "Tumaini University Dar es Salaam College"], ["HKMU", "Hubert Kairuki Memorial University"],
+  ["Chuo kingine", "Chuo kingine Dar es Salaam"]
+];
+
+// Picha ya mfano (nyumba ya pink) kwa vyumba vya mfano
+function ph(i) {
+  const bg = ["#ffd9e8", "#ffc2dc", "#f9b3d1", "#ffe3ee"][i % 4];
+  const fg = ["#e5197a", "#c20f64", "#ee4b97", "#d6338a"][i % 4];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="${bg}"/><path d="M200 70 90 160h30v90h160v-90h30z" fill="${fg}"/><rect x="175" y="180" width="50" height="70" rx="6" fill="${bg}"/></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+function samples() {
+  const rows = [
+    ["Chumba kimoja safi", "Chumba kimoja", "Mabibo", "UDSM", 80000, 12, ["Maji", "Umeme wa LUKU", "Usalama"]],
+    ["Self-contained ya kisasa", "Self-contained", "Upanga", "IFM", 180000, 8, ["Choo ndani", "Maji", "Wifi", "Usalama"]],
+    ["Chumba cha pamoja wawili", "Chumba cha pamoja", "Sinza", "UDSM", 45000, 20, ["Maji", "Umeme wa LUKU"]],
+    ["Master bedroom yenye jiko", "Master", "Upanga", "MUHAS", 240000, 15, ["Choo ndani", "Jiko", "Wifi", "Usalama"]],
+    ["Chumba kimoja karibu na chuo", "Chumba kimoja", "Kisutu", "DIT", 120000, 5, ["Maji", "Umeme wa LUKU", "Usalama"]],
+    ["Self-contained ya bei nafuu", "Self-contained", "Mabibo", "NIT", 130000, 10, ["Choo ndani", "Maji"]],
+    ["Chumba kimoja chenye uzio", "Chumba kimoja", "Kinondoni", "OUT", 70000, 18, ["Maji", "Uzio", "Umeme wa LUKU"]],
+    ["Apartment ya chumba kimoja", "Apartment", "Ilala", "CBE", 200000, 9, ["Choo ndani", "Jiko", "Wifi", "Parking"]]
+  ];
+  return rows.map((r, i) => ({
+    id: "s" + i, sample: true, title: r[0], type: r[1], area: r[2], chuo: r[3], price: r[4], walk: r[5], feats: r[6],
+    thumb: ph(i), photos: [ph(i), ph(i + 1), ph(i + 2)], dalaliName: "Dalali (mfano)", phone: "",
+    description: "Chumba safi, tulivu na salama. Maelezo kamili ya kodi na malipo ya awali yataandikwa na dalali.",
+    taken: i === 5, createdAt: { seconds: 1000 - i }
+  }));
+}
+
+let ROOMS = [];
+const fChuo = $("f-chuo"), fType = $("f-type"), fPrice = $("f-price"), fSort = $("f-sort");
+CHUO.forEach(([s, full]) => fChuo.append(new Option(s === "Chuo kingine" ? s : s + " · " + full, s)));
+TYPES.forEach((t) => fType.append(new Option(t, t)));
 
 async function load() {
-  const snap = await getDocs(collection(db, "rooms"));
-  ALL = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  if (live) {
+    try {
+      const { db, collection, query, where, getDocs } = lib;
+      const snap = await getDocs(query(collection(db, "rooms"), where("status", "==", "approved")));
+      ROOMS = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      $("status").textContent = "Vyumba havikupatikana sasa hivi. Jaribu tena baadaye.";
+      return;
+    }
+  } else {
+    ROOMS = samples();
+    $("sample-note").hidden = false;
+    if (lib) lib.needConfig();
+  }
   render();
 }
-function render() {
-  ["pending", "approved", "rejected"].forEach((s) => {
-    $("c-" + s).textContent = "(" + ALL.filter((r) => r.status === s).length + ")";
-  });
-  document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-selected", b.dataset.s === cur));
-  const rows = ALL.filter((r) => r.status === cur);
-  $("list").innerHTML = rows.length ? rows.map((r) => `
-    <div class="panel item" data-id="${r.id}">
-      <img class="t" src="${r.thumb}" alt="">
-      <div>
-        <h3>${esc(r.title)}</h3>
-        <p class="where">${esc(r.type)} · ${esc(r.area)}${r.chuo ? " · karibu na " + esc(r.chuo) : ""} · ${money(r.price)}${r.walk ? " · dakika " + esc(r.walk) : ""}</p>
-        <p class="where">Dalali: ${esc(r.dalaliName)} · ${esc(r.phone)}</p>
-        <p style="margin:6px 0 0;white-space:pre-line">${esc(r.description)}</p>
-      </div>
-      <div class="photos-line" data-photos></div>
-      <div class="acts">
-        <button class="btn ghost small" type="button" data-act="photos">Angalia picha</button>
-        ${r.status !== "approved" ? '<button class="btn small" type="button" data-act="approved">Kubali</button>' : ""}
-        ${r.status !== "rejected" ? '<button class="btn ghost small" type="button" data-act="rejected">Kataa</button>' : ""}
-        <button class="btn ghost small" type="button" data-act="del">Futa</button>
-      </div>
-    </div>`).join("") : '<div class="empty">Hakuna vyumba hapa kwa sasa.</div>';
-}
-$("tabs").addEventListener("click", (e) => { const b = e.target.closest("button[data-s]"); if (b) { cur = b.dataset.s; render(); } });
 
+function whereText(r) {
+  const c = r.chuo ? (r.walk ? " · dakika " + r.walk + " hadi " + r.chuo : " · karibu na " + r.chuo) : "";
+  return r.area + c;
+}
+
+function render() {
+  const max = Number(fPrice.value);
+  const sort = fSort.value;
+  $("clear").hidden = !(fChuo.value || fType.value || max);
+  const rows = ROOMS
+    .filter((r) => (!fChuo.value || r.chuo === fChuo.value) && (!fType.value || r.type === fType.value) && (!max || r.price <= max))
+    .sort((a, b) => ((a.taken ? 1 : 0) - (b.taken ? 1 : 0)) ||
+      (sort === "low" ? a.price - b.price : sort === "high" ? b.price - a.price : (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)));
+  $("status").textContent = rows.length ? rows.length + (rows.length === 1 ? " kimepatikana" : " vimepatikana") : "";
+  const list = $("list");
+  if (!rows.length) {
+    const msg = !ROOMS.length ? "Bado hakuna chumba kilichowekwa. Rudi tena hivi karibuni."
+      : fChuo.value ? "Bado hakuna chumba karibu na " + fChuo.value + " kinachofanana na ulichochagua. Jaribu chuo kingine au bei ya juu zaidi."
+      : "Hakuna chumba kinachofanana na ulichochagua. Jaribu bei ya juu zaidi.";
+    list.innerHTML = '<div class="empty">' + esc(msg) + "</div>";
+    return;
+  }
+  list.innerHTML = rows.map((r) => `
+    <article class="card${r.taken ? " taken" : ""}">
+      <div class="thumb"><img src="${r.thumb}" alt="${esc(r.title)}" loading="lazy">${r.taken ? '<span class="ribbon">Imechukuliwa</span>' : ""}</div>
+      <div class="body">
+        <span class="tag">${esc(r.type)}</span>
+        <h3>${esc(r.title)}</h3>
+        <p class="where">${esc(whereText(r))}</p>
+        <div class="price">${money(r.price)} <small>kwa mwezi</small></div>
+        <ul class="feats">${(r.feats || []).map((f) => "<li>" + esc(f) + "</li>").join("")}</ul>
+        <button class="btn" type="button" data-id="${esc(r.id)}">Angalia chumba</button>
+      </div>
+    </article>`).join("");
+}
+[fChuo, fType, fPrice, fSort].forEach((s) => s.addEventListener("change", render));
+$("clear").addEventListener("click", () => { fChuo.value = ""; fType.value = ""; fPrice.value = "0"; render(); });
+
+// Maelezo ya chumba
+const dlg = $("dlg");
 $("list").addEventListener("click", async (e) => {
-  const b = e.target.closest("button[data-act]"); if (!b) return;
-  const box = b.closest("[data-id]"), id = box.dataset.id, act = b.dataset.act;
-  b.disabled = true;
-  try {
-    if (act === "photos") {
-      const s = await getDoc(doc(db, "roomPhotos", id));
-      box.querySelector("[data-photos]").innerHTML = s.exists() ? s.data().photos.map((p) => `<img src="${p}" alt="">`).join("") : "Hakuna picha.";
-    } else if (act === "del") {
-      if (!confirm("Futa chumba hiki kabisa?")) { b.disabled = false; return; }
-      try { await deleteDoc(doc(db, "roomPhotos", id)); } catch (x) {}
-      await deleteDoc(doc(db, "rooms", id));
-      await load();
-    } else {
-      await updateDoc(doc(db, "rooms", id), { status: act });
-      await load();
-    }
-  } catch (err) { alert("Imeshindikana. Jaribu tena."); }
-  b.disabled = false;
+  const b = e.target.closest("button[data-id]");
+  if (!b) return;
+  const r = ROOMS.find((x) => x.id === b.dataset.id);
+  $("d-type").textContent = r.type;
+  $("d-title").textContent = r.title;
+  $("d-where").textContent = whereText(r);
+  $("d-price").innerHTML = money(r.price) + " <small>kwa mwezi</small>";
+  $("d-feats").innerHTML = (r.feats || []).map((f) => "<li>" + esc(f) + "</li>").join("");
+  $("d-desc").textContent = r.description || "";
+  $("d-who").textContent = "Dalali: " + (r.dalaliName || "");
+  const wa = waNumber(r.phone);
+  $("d-contact").innerHTML = r.taken
+    ? '<span class="num">Chumba hiki kimechukuliwa</span>'
+    : r.sample
+      ? '<span class="hint">Hiki ni chumba cha mfano. Namba ya dalali itaonekana kwenye vyumba halisi.</span>'
+      : `<span class="num">${esc(r.phone)}</span>
+         <a class="btn small" href="tel:+${wa}">Piga simu</a>
+         <a class="btn small ghost" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${encodeURIComponent("Habari, naulizia chumba: " + r.title + " (" + r.area + ") kwenye Housing Services.")}">WhatsApp</a>`;
+  showPhotos(r.photos || [r.thumb]);
+  dlg.showModal();
+  if (live && !r.photos) {
+    try {
+      const { db, doc, getDoc } = lib;
+      const s = await getDoc(doc(db, "roomPhotos", r.id));
+      if (s.exists() && s.data().photos?.length) showPhotos(s.data().photos);
+    } catch (err) { /* zinabaki picha ndogo */ }
+  }
 });
+function showPhotos(arr) {
+  $("d-main").src = arr[0];
+  $("d-main").alt = $("d-title").textContent;
+  $("d-thumbs").innerHTML = arr.length > 1 ? arr.map((p, i) => `<button type="button" data-i="${i}" aria-label="Picha ${i + 1}" ${i === 0 ? 'aria-current="true"' : ""}><img src="${p}" alt=""></button>`).join("") : "";
+  $("d-thumbs").onclick = (ev) => {
+    const t = ev.target.closest("button[data-i]");
+    if (!t) return;
+    $("d-main").src = arr[Number(t.dataset.i)];
+    $("d-thumbs").querySelectorAll("button").forEach((x) => x.removeAttribute("aria-current"));
+    t.setAttribute("aria-current", "true");
+  };
+}
+$("d-close").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+
+load();
 </script>
 </body>
 </html>
