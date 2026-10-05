@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Housing Services DSM · Vyumba kwa wanafunzi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">HOUSING SERVICES<small>DAR ES SALAAM · VYUO VYOTE</small></a>
+    <nav aria-label="Menyu">
+      <a href="index.html" aria-current="page">Vyumba</a>
+      <a href="dalali.html">Madalali</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <h1>Pata chumba karibu na <span>chuo chako</span>, bila usumbufu.</h1>
+      <p>Vyumba kwa wanafunzi wa UDSM, IFM, Ardhi, MUHAS, DIT na vyuo vingine vya Dar es Salaam. Chagua eneo, chuo, aina na bei.</p>
+      <div class="filters" role="search">
+        <div class="field">
+          <label for="f-uni">Chuo</label>
+          <select id="f-uni"><option value="">Vyuo vyote</option></select>
+        </div>
+        <div class="field">
+          <label for="f-area">Eneo</label>
+          <select id="f-area"><option value="">Maeneo yote</option></select>
+        </div>
+        <div class="field">
+          <label for="f-type">Aina ya chumba</label>
+          <select id="f-type"><option value="">Aina zote</option></select>
+        </div>
+        <div class="field">
+          <label for="f-price">Bei kwa mwezi</label>
+          <select id="f-price">
+            <option value="0">Bei yoyote</option>
+            <option value="60000">Hadi TSh 60,000</option>
+            <option value="100000">Hadi TSh 100,000</option>
+            <option value="150000">Hadi TSh 150,000</option>
+            <option value="250000">Hadi TSh 250,000</option>
+            <option value="400000">Hadi TSh 400,000</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="wrap">
+      <div id="config-warning" class="notice" hidden>Mradi bado haujaunganishwa na Firebase. Fungua <b>lib.js</b> na uweke config yako (angalia SETUP.md).</div>
+      <h2>Vyumba vilivyopo</h2>
+      <p class="sub" id="status">Inapakia vyumba...</p>
+      <div class="grid" id="list"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cta">
+        <div>
+          <h2>Wewe ni dalali?</h2>
+          <p>Jisajili bure na uweke vyumba vyako vionekane kwa wanafunzi wa vyuo vya Dar es Salaam.</p>
+        </div>
+        <a class="btn" href="dalali.html">Weka chumba</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="foot">Housing Services DSM · vyumba vya kupangisha kwa wanafunzi wa vyuo vya Dar es Salaam</footer>
+
+<dialog id="dlg" aria-labelledby="d-title">
+  <div class="dlg-in">
+    <div class="dlg-top">
+      <div>
+        <span class="tag" id="d-type"></span>
+        <h2 id="d-title"></h2>
+        <p class="where" id="d-where"></p>
+      </div>
+      <button class="btn ghost small" id="d-close" type="button">Funga</button>
+    </div>
+    <div class="gal-main"><img id="d-main" alt=""></div>
+    <div class="gal-thumbs" id="d-thumbs"></div>
+    <div class="price" id="d-price"></div>
+    <ul class="feats" id="d-feats"></ul>
+    <p id="d-desc" style="margin:0;white-space:pre-line"></p>
+    <div class="panel">
+      <div class="lbl" id="d-who"></div>
+      <div class="contact-row" id="d-contact"></div>
+    </div>
+  </div>
+</dialog>
+
+<script type="module">
+import { db, collection, query, where, getDocs, doc, getDoc, $, esc, money, waNumber, TYPES, UNIS, needConfig } from "./lib.js";
+
+let ROOMS = [];
+const fUni = $("f-uni"), fArea = $("f-area"), fType = $("f-type"), fPrice = $("f-price");
+
+TYPES.forEach((t) => fType.append(new Option(t, t)));
+UNIS.forEach((u) => fUni.append(new Option(u, u)));
+
+async function load() {
+  if (!needConfig()) { $("status").textContent = ""; return; }
+  try {
+    const snap = await getDocs(query(collection(db, "rooms"), where("status", "==", "approved")));
+    ROOMS = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.taken - b.taken) || ((b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)));
+    [...new Set(ROOMS.map((r) => r.area).filter(Boolean))].sort().forEach((a) => fArea.append(new Option(a, a)));
+    render();
+  } catch (e) {
+    console.error(e);
+    $("status").textContent = "Vyumba havikupatikana sasa hivi. Jaribu tena baadaye.";
+  }
+}
+
+function render() {
+  const max = Number(fPrice.value);
+  const rows = ROOMS.filter((r) =>
+    (!fUni.value || r.uni === fUni.value) &&
+    (!fArea.value || r.area === fArea.value) &&
+    (!fType.value || r.type === fType.value) &&
+    (!max || r.price <= max)
+  );
+  $("status").textContent = rows.length ? rows.length + " vimepatikana" : "";
+  const list = $("list");
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty">' +
+      (ROOMS.length
+        ? "Hakuna chumba kinachofanana na ulichochagua. Jaribu bei ya juu zaidi, eneo jingine au chuo kingine."
+        : "Bado hakuna chumba kilichowekwa. Rudi tena hivi karibuni.") +
+      "</div>";
+    return;
+  }
+  list.innerHTML = rows.map((r) => `
+    <article class="card${r.taken ? " taken" : ""}">
+      <div class="thumb">
+        <img src="${esc(r.thumb)}" alt="${esc(r.title)}" loading="lazy">
+        ${r.taken ? '<span class="ribbon">Imechukuliwa</span>' : ""}
+      </div>
+      <div class="body">
+        <span class="tag">${esc(r.type)}</span>
+        <h3>${esc(r.title)}</h3>
+        <p class="where">
+          ${esc(r.area)}${r.walk ? " · dakika " + esc(r.walk) + " hadi chuo" : ""}
+          ${r.uni ? "<br><small style='opacity:.85'>" + esc(r.uni) + "</small>" : ""}
+        </p>
+        <div class="price">${money(r.price)} <small>kwa mwezi</small></div>
+        <ul class="feats">${(r.feats || []).map((f) => "<li>" + esc(f) + "</li>").join("")}</ul>
+        <button class="btn" type="button" data-id="${r.id}">Angalia chumba</button>
+      </div>
+    </article>`).join("");
+}
+
+[fUni, fArea, fType, fPrice].forEach((s) => s.addEventListener("change", render));
+
+/* ── Dialog ───────────────────────────────── */
+const dlg = $("dlg");
+$("list").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-id]");
+  if (!b) return;
+  const r = ROOMS.find((x) => x.id === b.dataset.id);
+  if (!r) return;
+
+  $("d-type").textContent = r.type || "";
+  $("d-title").textContent = r.title || "";
+  $("d-where").textContent =
+    (r.area || "") +
+    (r.walk ? " · dakika " + r.walk + " hadi chuo" : "") +
+    (r.uni ? " · " + r.uni : "");
+  $("d-price").innerHTML = money(r.price) + " <small>kwa mwezi</small>";
+  $("d-feats").innerHTML = (r.feats || []).map((f) => "<li>" + esc(f) + "</li>").join("");
+  $("d-desc").textContent = r.description || "";
+  $("d-who").textContent = "Dalali: " + (r.dalaliName || "");
+
+  const wa = waNumber(r.phone);
+  $("d-contact").innerHTML = r.taken
+    ? '<span class="num">Chumba hiki kimechukuliwa</span>'
+    : `<span class="num">${esc(r.phone)}</span>
+       <a class="btn small" href="tel:+${wa}">Piga simu</a>
+       <a class="btn small ghost" target="_blank" rel="noopener"
+          href="https://wa.me/${wa}?text=${encodeURIComponent(
+            "Habari, naulizia chumba: " + r.title + " (" + (r.area || "") + ") kwenye Housing Services DSM."
+          )}">WhatsApp</a>`;
+
+  showPhotos([r.thumb].filter(Boolean));
+  dlg.showModal();
+
+  try {
+    const s = await getDoc(doc(db, "roomPhotos", r.id));
+    if (s.exists() && s.data().photos?.length) showPhotos(s.data().photos);
+  } catch (err) { /* keep thumb */ }
+});
+
+function showPhotos(arr) {
+  if (!arr.length) return;
+  $("d-main").src = arr[0];
+  $("d-main").alt = $("d-title").textContent;
+  $("d-thumbs").innerHTML =
+    arr.length > 1
+      ? arr
+          .map(
+            (p, i) =>
+              `<button type="button" data-i="${i}" aria-label="Picha ${i + 1}" ${
+                i === 0 ? 'aria-current="true"' : ""
+              }><img src="${esc(p)}" alt=""></button>`
+          )
+          .join("")
+      : "";
+  $("d-thumbs").onclick = (ev) => {
+    const t = ev.target.closest("button[data-i]");
+    if (!t) return;
+    $("d-main").src = arr[Number(t.dataset.i)];
+    $("d-thumbs").querySelectorAll("button").forEach((x) => x.removeAttribute("aria-current"));
+    t.setAttribute("aria-current", "true");
+  };
+}
+
+$("d-close").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", (e) => {
+  if (e.target === dlg) dlg.close();
+});
+
+load();
+</script>
+</body>
+</html>

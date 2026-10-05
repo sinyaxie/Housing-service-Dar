@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Housing Services DSM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .login-box {
+    max-width: 380px;
+    margin: 60px auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .login-box h2 { margin: 0 0 8px; }
+  .login-box p { color: var(--muted); margin: 0 0 20px; font-weight: 600; }
+  .login-box input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .tabs button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .tabs button.active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand-dark);
+  }
+  .admin-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .admin-card .ac-img {
+    background: #e2e8f0;
+    min-height: 110px;
+  }
+  .admin-card .ac-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .admin-card .ac-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .admin-card h3 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+  .admin-card .meta {
+    font-size: 0.88rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .admin-card .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .btn.approve { background: #059669; }
+  .btn.approve:hover { background: #047857; }
+  .btn.reject { background: #dc2626; }
+  .btn.reject:hover { background: #b91c1c; }
+  .btn.taken-btn { background: #d97706; }
+  .btn.taken-btn:hover { background: #b45309; }
+  .status-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .status-pill.pending { background: #fef3c7; color: #92400e; }
+  .status-pill.approved { background: #d1fae5; color: #065f46; }
+  .status-pill.rejected { background: #fee2e2; color: #991b1b; }
+  .status-pill.taken { background: #e2e8f0; color: #475569; }
+  @media (max-width: 560px) {
+    .admin-card { grid-template-columns: 1fr; }
+    .admin-card .ac-img { height: 160px; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">HOUSING SERVICES<small>DAR ES SALAAM · VYUO VYOTE</small></a>
+    <nav aria-label="Menyu">
+      <a href="index.html">Vyumba</a>
+      <a href="dalali.html">Madalali</a>
+      <a href="admin.html" aria-current="page">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="login-view">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <p>Weka nenosiri la admin ili kudhibiti vyumba.</p>
+      <div id="login-err" class="msg err" hidden></div>
+      <input type="password" id="pw" placeholder="Nenosiri" autocomplete="current-password">
+      <button class="btn" type="button" id="login-btn" style="width:100%">Ingia</button>
+    </div>
+  </div>
+
+  <div id="admin-view" hidden>
+    <section class="block">
+      <div class="wrap">
+        <div id="config-warning" class="notice" hidden>Firebase bado haijawekwa.</div>
+        <h2>Admin Panel</h2>
+        <p class="sub" id="admin-status">Inapakia...</p>
+
+        <div class="tabs" id="tabs">
+          <button type="button" data-f="pending" class="active">Pending</button>
+          <button type="button" data-f="approved">Approved</button>
+          <button type="button" data-f="rejected">Rejected</button>
+          <button type="button" data-f="all">Zote</button>
+        </div>
+
+        <div id="admin-list"></div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer class="foot">Housing Services DSM · Admin</footer>
+
+<script type="module">
+import {
+  db, collection, getDocs, doc, updateDoc, deleteDoc,
+  $, esc, money, needConfig, ADMIN_PASSWORD
+} from "./lib.js";
+
+const loginView = $("login-view");
+const adminView = $("admin-view");
+const listEl = $("admin-list");
+const statusEl = $("admin-status");
+let ROOMS = [];
+let filter = "pending";
+
+// Persist login in session
+if (sessionStorage.getItem("hs_admin") === "1") {
+  loginView.hidden = true;
+  adminView.hidden = false;
+  load();
+}
+
+$("login-btn").addEventListener("click", tryLogin);
+$("pw").addEventListener("keydown", (e) => { if (e.key === "Enter") tryLogin(); });
+
+function tryLogin() {
+  const pw = $("pw").value;
+  if (pw === ADMIN_PASSWORD) {
+    sessionStorage.setItem("hs_admin", "1");
+    loginView.hidden = true;
+    adminView.hidden = false;
+    load();
+  } else {
+    const err = $("login-err");
+    err.hidden = false;
+    err.textContent = "Nenosiri si sahihi.";
+  }
+}
+
+$("tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-f]");
+  if (!b) return;
+  filter = b.dataset.f;
+  $("tabs").querySelectorAll("button").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active");
+  render();
+});
+
+async function load() {
+  if (!needConfig()) {
+    statusEl.textContent = "";
+    return;
+  }
+  try {
+    const snap = await getDocs(collection(db, "rooms"));
+    ROOMS = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    render();
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = "Hitilafu kupakia data.";
+  }
+}
+
+function render() {
+  let rows = ROOMS;
+  if (filter === "pending") rows = ROOMS.filter((r) => r.status === "pending");
+  else if (filter === "approved") rows = ROOMS.filter((r) => r.status === "approved");
+  else if (filter === "rejected") rows = ROOMS.filter((r) => r.status === "rejected");
+
+  statusEl.textContent = rows.length + " vyumba";
+
+  if (!rows.length) {
+    listEl.innerHTML = '<div class="empty">Hakuna chumba katika kundi hili.</div>';
+    return;
+  }
+
+  listEl.innerHTML = rows.map((r) => {
+    const st = r.taken ? "taken" : (r.status || "pending");
+    const stLabel = r.taken ? "Taken" : (r.status || "pending");
+    return `
+    <article class="admin-card" data-id="${r.id}">
+      <div class="ac-img">
+        <img src="${esc(r.thumb || "")}" alt="" loading="lazy"
+             onerror="this.style.display='none'">
+      </div>
+      <div class="ac-body">
+        <div>
+          <span class="status-pill ${st}">${stLabel}</span>
+          <span class="tag" style="margin-left:6px">${esc(r.type || "")}</span>
+        </div>
+        <h3>${esc(r.title || "")}</h3>
+        <div class="meta">
+          ${esc(r.area || "")} · ${esc(r.uni || "")}<br>
+          ${money(r.price)} / mwezi
+          ${r.walk ? " · " + r.walk + " dk" : ""}<br>
+          Dalali: ${esc(r.dalaliName || "")} · ${esc(r.phone || "")}
+        </div>
+        <div class="actions">
+          ${r.status !== "approved" ? `<button class="btn small approve" data-act="approve">Approve</button>` : ""}
+          ${r.status !== "rejected" ? `<button class="btn small reject" data-act="reject">Reject</button>` : ""}
+          ${r.status === "approved" && !r.taken ? `<button class="btn small taken-btn" data-act="taken">Mark Taken</button>` : ""}
+          ${r.taken ? `<button class="btn small ghost" data-act="available">Mark Available</button>` : ""}
+          <button class="btn small ghost" data-act="delete">Futa</button>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+listEl.addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const card = btn.closest("[data-id]");
+  const id = card.dataset.id;
+  const act = btn.dataset.act;
+  const room = ROOMS.find((r) => r.id === id);
+  if (!room) return;
+
+  btn.disabled = true;
+  try {
+    if (act === "approve") {
+      await updateDoc(doc(db, "rooms", id), { status: "approved" });
+      room.status = "approved";
+    } else if (act === "reject") {
+      await updateDoc(doc(db, "rooms", id), { status: "rejected" });
+      room.status = "rejected";
+    } else if (act === "taken") {
+      await updateDoc(doc(db, "rooms", id), { taken: true });
+      room.taken = true;
+    } else if (act === "available") {
+      await updateDoc(doc(db, "rooms", id), { taken: false });
+      room.taken = false;
+    } else if (act === "delete") {
+      if (!confirm("Futa chumba hiki kabisa?")) { btn.disabled = false; return; }
+      await deleteDoc(doc(db, "rooms", id));
+      // optional: delete roomPhotos too
+      try { await deleteDoc(doc(db, "roomPhotos", id)); } catch (_) {}
+      ROOMS = ROOMS.filter((r) => r.id !== id);
+    }
+    render();
+  } catch (err) {
+    console.error(err);
+    alert("Hitilafu: " + err.message);
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
